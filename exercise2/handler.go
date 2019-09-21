@@ -38,15 +38,21 @@ func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.Handl
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	// TODO: Implement this...
-	var yamlOutput[2] map[string]string
+	// var yamlOutput[2] map[string]string
+	var yamlOutput []uri
 	output := map[string]string{}
 	error := yaml.Unmarshal(yml, &yamlOutput)
 	if error != nil {
 		return nil, error
 	}
 	for _, value := range yamlOutput {
-		output[value["path"]] = value["url"]
+		output[value.Path] = value.Url
 	}
 
 	return MapHandler(output, fallback), nil
+}
+
+type uri struct {
+	Path string `yaml:"path"`
+	Url string `yaml:"url"`
 }
