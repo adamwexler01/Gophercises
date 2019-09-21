@@ -3,12 +3,22 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"io/ioutil"
+	"flag"
+	"log"
 
 	"github.com/gophercises/exercise2"
 )
 
 func main() {
 	mux := defaultMux()
+
+	yamlFileName := flag.String("yaml", "example.yml", "provide an appropriate yml file and its name as input")
+	flag.Parse()
+	yaml, error := ioutil.ReadFile(*yamlFileName)
+	if error != nil {
+		log.Fatal("Can't read the incoming yml file")
+	}
 
 	// Build the MapHandler using the mux as the fallback
 	pathsToUrls := map[string]string{
@@ -19,13 +29,8 @@ func main() {
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
-	yaml := `
-- path: /urlshort
-  url: https://github.com/gophercises/urlshort
-- path: /urlshort-final
-  url: https://github.com/gophercises/urlshort/tree/solution`
 
-	yamlHandler, err := urlshort.YAMLHandler([]byte(yaml), mapHandler)
+	yamlHandler, err := urlshort.YAMLHandler(yaml, mapHandler)
 	if err != nil {
 		panic(err)
 	}
