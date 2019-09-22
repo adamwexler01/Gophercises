@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"io/ioutil"
 	"flag"
-	"log"
 
 	"github.com/gophercises/exercise2"
 )
@@ -13,11 +12,17 @@ import (
 func main() {
 	mux := defaultMux()
 
-	yamlFileName := flag.String("yaml", "example.yml", "provide an appropriate yml file and its name as input")
+	yamlFileName := flag.String("yaml", "example.yml", "provide an appropriate any *.yml or *.yaml and its name as input")
+	jsonFileName := flag.String("json", "example.json", "provide an appropriate any *.json for its name as input")
 	flag.Parse()
+
+	json, error := ioutil.ReadFile(*jsonFileName)
+	if(error != nil){
+		panic(error)
+	}
 	yaml, error := ioutil.ReadFile(*yamlFileName)
 	if error != nil {
-		log.Fatal("Can't read the incoming yml file")
+		panic(error)
 	}
 
 	// Build the MapHandler using the mux as the fallback
@@ -35,8 +40,14 @@ func main() {
 		panic(err)
 	}
 
+	//Build the JSONHandler using the mapHandler as the fallback
+	jsonHandler, err := urlshort.JSONHandler([]byte(json), yamlHandler)
+	if err != nil {
+		panic(err)
+	}
+
 	fmt.Println("Starting the server on :3000")
-	http.ListenAndServe(":3000", yamlHandler)
+	http.ListenAndServe(":3000", jsonHandler)
 }
 
 func defaultMux() *http.ServeMux {

@@ -1,0 +1,5 @@
+[
+    {"path": "/google", "url": "https://www.google.com"},
+    {"path": "/espn", "url": "https://www.espn.com"},
+    {"path": "/golang", "url": "https://golang.org/"}
+]
